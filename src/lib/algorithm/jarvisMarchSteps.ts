@@ -162,9 +162,17 @@ export function jarvisMarchWithSteps(points: Point[]): AlgorithmStep[] {
     currentIndex = nextIndex;
   } while (currentIndex !== startIndex && hull.length < n);
 
+  const hullTypes: Record<number, string> = {
+    1: 'Point',
+    2: 'Segment',
+    3: 'Triangle',
+    4: 'Quadrilateral',
+  };
+  const hullType = hullTypes[hull.length] || `${hull.length}-gon`;
+
   steps.push({
     type: 'complete',
-    description: `Convex hull complete with ${hull.length} vertices`,
+    description: `Convex hull complete: ${hullType} with ${hull.length} vertices`,
     currentPoint: null,
     candidatePoint: null,
     checkingPoint: null,
