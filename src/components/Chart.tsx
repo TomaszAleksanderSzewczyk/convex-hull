@@ -177,54 +177,70 @@ export default function Chart({ points, result, step, visualizationMode = false,
 
       // Draw visualization elements in step mode
       if (visualizationMode && step) {
-        // Draw highlight line (checking line)
-        if (step.highlightLine) {
+        // Draw line from current point to candidate (solid blue line)
+        if (step.currentPoint && step.candidatePoint) {
           ctx.beginPath();
           ctx.moveTo(
-            xScale.getPixelForValue(step.highlightLine[0].x),
-            yScale.getPixelForValue(step.highlightLine[0].y)
+            xScale.getPixelForValue(step.currentPoint.x),
+            yScale.getPixelForValue(step.currentPoint.y)
           );
           ctx.lineTo(
-            xScale.getPixelForValue(step.highlightLine[1].x),
-            yScale.getPixelForValue(step.highlightLine[1].y)
+            xScale.getPixelForValue(step.candidatePoint.x),
+            yScale.getPixelForValue(step.candidatePoint.y)
           );
-          ctx.strokeStyle = 'rgba(251, 191, 36, 0.8)';
-          ctx.lineWidth = 2;
-          ctx.setLineDash([5, 5]);
-          ctx.stroke();
-          ctx.setLineDash([]);
-        }
-
-        // Draw current point highlight
-        if (step.currentPoint) {
-          const x = xScale.getPixelForValue(step.currentPoint.x);
-          const y = yScale.getPixelForValue(step.currentPoint.y);
-          ctx.beginPath();
-          ctx.arc(x, y, 20, 0, 2 * Math.PI);
-          ctx.strokeStyle = 'rgba(34, 197, 94, 0.8)';
+          ctx.strokeStyle = 'rgba(59, 130, 246, 0.9)';
           ctx.lineWidth = 3;
           ctx.stroke();
         }
 
-        // Draw candidate point highlight
+        // Draw line from current point to checking point (dashed yellow line)
+        if (step.currentPoint && step.checkingPoint) {
+          ctx.beginPath();
+          ctx.moveTo(
+            xScale.getPixelForValue(step.currentPoint.x),
+            yScale.getPixelForValue(step.currentPoint.y)
+          );
+          ctx.lineTo(
+            xScale.getPixelForValue(step.checkingPoint.x),
+            yScale.getPixelForValue(step.checkingPoint.y)
+          );
+          ctx.strokeStyle = 'rgba(251, 191, 36, 0.9)';
+          ctx.lineWidth = 3;
+          ctx.setLineDash([8, 8]);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+
+        // Draw current point highlight (green circle)
+        if (step.currentPoint) {
+          const x = xScale.getPixelForValue(step.currentPoint.x);
+          const y = yScale.getPixelForValue(step.currentPoint.y);
+          ctx.beginPath();
+          ctx.arc(x, y, 22, 0, 2 * Math.PI);
+          ctx.strokeStyle = 'rgba(34, 197, 94, 1)';
+          ctx.lineWidth = 4;
+          ctx.stroke();
+        }
+
+        // Draw candidate point highlight (blue circle)
         if (step.candidatePoint) {
           const x = xScale.getPixelForValue(step.candidatePoint.x);
           const y = yScale.getPixelForValue(step.candidatePoint.y);
           ctx.beginPath();
-          ctx.arc(x, y, 18, 0, 2 * Math.PI);
-          ctx.strokeStyle = 'rgba(59, 130, 246, 0.8)';
-          ctx.lineWidth = 2;
+          ctx.arc(x, y, 20, 0, 2 * Math.PI);
+          ctx.strokeStyle = 'rgba(59, 130, 246, 1)';
+          ctx.lineWidth = 3;
           ctx.stroke();
         }
 
-        // Draw checking point highlight
+        // Draw checking point highlight (yellow circle)
         if (step.checkingPoint) {
           const x = xScale.getPixelForValue(step.checkingPoint.x);
           const y = yScale.getPixelForValue(step.checkingPoint.y);
           ctx.beginPath();
-          ctx.arc(x, y, 16, 0, 2 * Math.PI);
-          ctx.strokeStyle = 'rgba(251, 191, 36, 0.8)';
-          ctx.lineWidth = 2;
+          ctx.arc(x, y, 18, 0, 2 * Math.PI);
+          ctx.strokeStyle = 'rgba(251, 191, 36, 1)';
+          ctx.lineWidth = 3;
           ctx.stroke();
         }
       }
@@ -380,7 +396,9 @@ export default function Chart({ points, result, step, visualizationMode = false,
   };
 
   // Create a unique key based on hull vertices to force chart re-render when hull changes
-  const chartKey = hullVertices.map(v => `${v.x},${v.y}`).join('|');
+  // Include step info in key to force re-render when step changes
+  const stepKey = step ? `${step.currentPoint?.x},${step.currentPoint?.y}-${step.candidatePoint?.x},${step.candidatePoint?.y}-${step.checkingPoint?.x},${step.checkingPoint?.y}` : '';
+  const chartKey = hullVertices.map(v => `${v.x},${v.y}`).join('|') + stepKey;
 
   return (
     <div className="bg-white rounded-lg shadow-md p-3 sm:p-6">
@@ -422,13 +440,15 @@ export default function Chart({ points, result, step, visualizationMode = false,
         <div className="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t flex flex-wrap gap-2 sm:gap-4 justify-center text-[10px] sm:text-xs">
           <div className="flex items-center gap-1">
             <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full border-2 border-green-500"></span>
-            <span className="text-gray-500">Current</span>
+            <span className="text-gray-500">Current point</span>
           </div>
           <div className="flex items-center gap-1">
+            <span className="w-4 sm:w-5 h-0.5 bg-blue-500"></span>
             <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full border-2 border-blue-500"></span>
             <span className="text-gray-500">Candidate</span>
           </div>
           <div className="flex items-center gap-1">
+            <span className="w-4 sm:w-5 h-0.5 bg-yellow-500" style={{backgroundImage: 'repeating-linear-gradient(90deg, #eab308 0, #eab308 3px, transparent 3px, transparent 6px)'}}></span>
             <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full border-2 border-yellow-500"></span>
             <span className="text-gray-500">Checking</span>
           </div>

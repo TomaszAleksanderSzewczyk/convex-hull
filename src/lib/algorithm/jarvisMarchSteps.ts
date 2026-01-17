@@ -60,12 +60,17 @@ export function jarvisMarchWithSteps(points: Point[]): AlgorithmStep[] {
   let currentIndex = startIndex;
 
   // STEP 2: Gift wrapping
+  let isFirstPoint = true;
   do {
     hull.push(points[currentIndex]);
 
+    const reason = isFirstPoint
+      ? `(starting point - has lowest Y coordinate)`
+      : `(most counterclockwise from previous point)`;
+
     steps.push({
       type: 'found',
-      description: `Added P${currentIndex + 1} to hull`,
+      description: `Added P${currentIndex + 1} to hull ${reason}`,
       currentPoint: points[currentIndex],
       candidatePoint: null,
       checkingPoint: null,
@@ -73,19 +78,29 @@ export function jarvisMarchWithSteps(points: Point[]): AlgorithmStep[] {
       highlightLine: null,
     });
 
-    let nextIndex = 0;
+    isFirstPoint = false;
+
+    // Initialize nextIndex to first point that isn't currentIndex
+    let nextIndex = (currentIndex + 1) % n;
+
+    const arrayOrder = points.map((_, i) => `P${i + 1}`).join('→');
+    steps.push({
+      type: 'checking',
+      description: `From P${currentIndex + 1}: picking P${nextIndex + 1} as initial candidate (next in array: ${arrayOrder})`,
+      currentPoint: points[currentIndex],
+      candidatePoint: points[nextIndex],
+      checkingPoint: null,
+      hullSoFar: [...hull],
+      highlightLine: [points[currentIndex], points[nextIndex]],
+    });
 
     // Check all points to find the most counterclockwise
     for (let i = 0; i < n; i++) {
-      if (i === currentIndex) continue;
-      if (nextIndex === currentIndex) {
-        nextIndex = i;
-        continue;
-      }
+      if (i === currentIndex || i === nextIndex) continue;
 
       steps.push({
         type: 'checking',
-        description: `From P${currentIndex + 1}: checking P${i + 1} against candidate P${nextIndex + 1}`,
+        description: `From P${currentIndex + 1}: comparing candidate P${nextIndex + 1} against P${i + 1}`,
         currentPoint: points[currentIndex],
         candidatePoint: points[nextIndex],
         checkingPoint: points[i],
@@ -94,15 +109,16 @@ export function jarvisMarchWithSteps(points: Point[]): AlgorithmStep[] {
       });
 
       const cross = crossProduct(points[currentIndex], points[nextIndex], points[i]);
+      const oldCandidateIndex = nextIndex;
 
       if (cross > 0) {
         nextIndex = i;
         steps.push({
-          type: 'checking',
-          description: `P${i + 1} is more counterclockwise - new candidate`,
+          type: 'found',
+          description: `P${i + 1} is more counterclockwise than P${oldCandidateIndex + 1} - P${i + 1} is new candidate!`,
           currentPoint: points[currentIndex],
           candidatePoint: points[nextIndex],
-          checkingPoint: null,
+          checkingPoint: points[i],
           hullSoFar: [...hull],
           highlightLine: [points[currentIndex], points[nextIndex]],
         });
@@ -111,15 +127,35 @@ export function jarvisMarchWithSteps(points: Point[]): AlgorithmStep[] {
             distanceSquared(points[currentIndex], points[nextIndex])) {
           nextIndex = i;
           steps.push({
-            type: 'checking',
-            description: `P${i + 1} is collinear but farther - new candidate`,
+            type: 'found',
+            description: `P${i + 1} is collinear with P${oldCandidateIndex + 1} but farther - P${i + 1} is new candidate!`,
             currentPoint: points[currentIndex],
             candidatePoint: points[nextIndex],
-            checkingPoint: null,
+            checkingPoint: points[i],
+            hullSoFar: [...hull],
+            highlightLine: [points[currentIndex], points[nextIndex]],
+          });
+        } else {
+          steps.push({
+            type: 'checking',
+            description: `P${i + 1} is collinear with P${nextIndex + 1} but closer - keeping P${nextIndex + 1}`,
+            currentPoint: points[currentIndex],
+            candidatePoint: points[nextIndex],
+            checkingPoint: points[i],
             hullSoFar: [...hull],
             highlightLine: [points[currentIndex], points[nextIndex]],
           });
         }
+      } else {
+        steps.push({
+          type: 'checking',
+          description: `P${i + 1} is more clockwise than P${nextIndex + 1} - keeping P${nextIndex + 1}`,
+          currentPoint: points[currentIndex],
+          candidatePoint: points[nextIndex],
+          checkingPoint: points[i],
+          hullSoFar: [...hull],
+          highlightLine: [points[currentIndex], points[nextIndex]],
+        });
       }
     }
 
