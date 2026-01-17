@@ -40,7 +40,7 @@ export default function PointInput({ points, onChange }: PointInputProps) {
                 type="number"
                 value={point.x}
                 onChange={(e) => handleChange(index, 'x', e.target.value)}
-                className="w-16 px-2 py-1 border border-gray-300 rounded text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-20 px-2 py-1 border border-gray-300 rounded text-right focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="X"
               />
               <span className="text-gray-500">,</span>
@@ -48,7 +48,7 @@ export default function PointInput({ points, onChange }: PointInputProps) {
                 type="number"
                 value={point.y}
                 onChange={(e) => handleChange(index, 'y', e.target.value)}
-                className="w-16 px-2 py-1 border border-gray-300 rounded text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-20 px-2 py-1 border border-gray-300 rounded text-right focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Y"
               />
               <span className="text-gray-500">)</span>
