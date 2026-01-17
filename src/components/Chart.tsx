@@ -383,9 +383,9 @@ export default function Chart({ points, result, step, visualizationMode = false,
   const chartKey = hullVertices.map(v => `${v.x},${v.y}`).join('|');
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-xl font-semibold mb-4 text-gray-800">Visualization</h2>
-      <div className="h-[500px] md:h-[600px]">
+    <div className="bg-white rounded-lg shadow-md p-3 sm:p-6">
+      <h2 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-4 text-gray-800">Visualization</h2>
+      <div className="h-[280px] sm:h-[400px] md:h-[500px] lg:h-[600px]">
         <Scatter
           ref={chartRef}
           key={chartKey}
@@ -400,17 +400,17 @@ export default function Chart({ points, result, step, visualizationMode = false,
       </div>
 
       {/* Legend */}
-      <div className="mt-4 flex flex-wrap gap-4 justify-center text-sm">
+      <div className="mt-2 sm:mt-4 grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-4 justify-center text-xs sm:text-sm">
         {displayPoints.map((point, index) => (
-          <div key={index} className="flex items-center gap-2">
+          <div key={index} className="flex items-center gap-1 sm:gap-2">
             <span
-              className="w-4 h-4 rounded-full border-2"
+              className="w-3 h-3 sm:w-4 sm:h-4 rounded-full border-2 flex-shrink-0"
               style={{
                 backgroundColor: pointColors[index].bg,
                 borderColor: pointColors[index].border
               }}
             />
-            <span className="text-gray-600">
+            <span className="text-gray-600 truncate">
               P{index + 1}: ({point.x}, {point.y})
             </span>
           </div>
@@ -419,17 +419,17 @@ export default function Chart({ points, result, step, visualizationMode = false,
 
       {/* Visualization legend */}
       {visualizationMode && (
-        <div className="mt-3 pt-3 border-t flex flex-wrap gap-4 justify-center text-xs">
+        <div className="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t flex flex-wrap gap-2 sm:gap-4 justify-center text-[10px] sm:text-xs">
           <div className="flex items-center gap-1">
-            <span className="w-3 h-3 rounded-full border-2 border-green-500"></span>
-            <span className="text-gray-500">Current point</span>
+            <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full border-2 border-green-500"></span>
+            <span className="text-gray-500">Current</span>
           </div>
           <div className="flex items-center gap-1">
-            <span className="w-3 h-3 rounded-full border-2 border-blue-500"></span>
+            <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full border-2 border-blue-500"></span>
             <span className="text-gray-500">Candidate</span>
           </div>
           <div className="flex items-center gap-1">
-            <span className="w-3 h-3 rounded-full border-2 border-yellow-500"></span>
+            <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full border-2 border-yellow-500"></span>
             <span className="text-gray-500">Checking</span>
           </div>
         </div>

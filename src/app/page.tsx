@@ -85,18 +85,18 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-gray-100 py-8">
-      <div className="container mx-auto px-4 max-w-6xl">
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
+    <main className="min-h-screen bg-gray-100 py-4 sm:py-8">
+      <div className="container mx-auto px-3 sm:px-4 max-w-6xl">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-gray-800 mb-4 sm:mb-8">
           Convex Hull of 4 Points
         </h1>
 
         {/* Mode toggle */}
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-center mb-4 sm:mb-6">
           <div className="inline-flex rounded-lg border border-gray-200 bg-white p-1">
             <button
               onClick={() => setVisualizationMode(false)}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-colors ${
                 !visualizationMode
                   ? 'bg-blue-500 text-white'
                   : 'text-gray-600 hover:bg-gray-100'
@@ -110,7 +110,7 @@ export default function Home() {
                 setCurrentStepIndex(0);
                 setIsPlaying(false);
               }}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-colors ${
                 visualizationMode
                   ? 'bg-blue-500 text-white'
                   : 'text-gray-600 hover:bg-gray-100'
@@ -122,7 +122,7 @@ export default function Home() {
         </div>
 
         {/* Chart */}
-        <div className="mb-6">
+        <div className="mb-4 sm:mb-6">
           <Chart
             points={points}
             result={result}
@@ -133,7 +133,7 @@ export default function Home() {
         </div>
 
         {/* Controls */}
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           <PointInput points={points} onChange={handlePointsChange} />
 
           {visualizationMode ? (
